@@ -23,6 +23,7 @@ import model.DBUtil;
 public class Insert extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	String message="";
+	String message1="";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -36,7 +37,19 @@ public class Insert extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doPost(request,response);
+		message1="";
+		String word=request.getParameter("word");
+		if(!word.equalsIgnoreCase("")){
+		EntityManager em=DBUtil.getEmFactory().createEntityManager();
+		String q="select b from Bullhorn b  where upper(b.post) like upper('%"+word+"%')";
+		TypedQuery<Bullhorn>bq =em.createQuery(q,Bullhorn.class);
+		List<Bullhorn> list=bq.getResultList();
+		message1+="  Search Results:<br> ";
+		for(Bullhorn temp:list)
+			message1+=temp.getPost()+"<br>";
+		request.setAttribute("message1", message1);
+		getServletContext().getRequestDispatcher("/GetPost.jsp").forward(request, response);
+		}
 	}
 
 	/**
@@ -44,10 +57,8 @@ public class Insert extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		HttpSession session = request.getSession(true);
-		int uid =Integer.parseInt((String) session.getAttribute("userid"));
-		HttpSession session1 = request.getSession(true);
-		String name= (String) session1.getAttribute("name");
+		HttpSession session = request.getSession(true);		
+		HttpSession session1 = request.getSession(true);		
 		String currentpage=request.getParameter("currentpage");
 		message="";
 		try{
@@ -55,12 +66,14 @@ public class Insert extends HttpServlet {
 			//message+="<h3>List Of Posts Entered:</h3>";
 			//String name=request.getParameter("name");
 			if(currentpage.equalsIgnoreCase("EnterPost")){
+				int uid =Integer.parseInt((String) session.getAttribute("userid"));
+				String name= (String) session1.getAttribute("name");
 				String post=request.getParameter("post");			
 				model.Bullhorn user=new model.Bullhorn();
 				user.setName(name);
 				user.setPost(post);			
 				user.setPersonId((BigDecimal.valueOf((long)uid)));	
-				BigDecimal lgid=BigDecimal.valueOf((long)uid);
+				//BigDecimal lgid=BigDecimal.valueOf((long)uid);
 				if(!post.equalsIgnoreCase(""))	
 				model.DBUtil.insert(user);
 				message+="Successfully Posted !Thank You.";

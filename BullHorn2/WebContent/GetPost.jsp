@@ -29,8 +29,14 @@
 <form action="Insert" method="post">
 <input type=hidden value="GetPost" name="currentpage">
 <label>&nbsp;</label>
-<input type="submit" value="Get Post Stream" id="submit">
-</form>
+<input type="submit" value="Get Post Stream" id="submit"></form>
+
 ${message}
+<form action="Insert" method="get">
+<label >Enter search word: </label>
+<input  type="text" name="word"  ><br>
+<input type="submit" value="Get Post Stream for a word " id="submit">
+</form>
+${message1}
 </body>
 </html>
